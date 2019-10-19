@@ -1,4 +1,4 @@
-# OptimisationMethods
+# Optimisation Methods
 
 ## Первая лабораторная
 ### Часть первая
