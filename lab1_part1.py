@@ -20,6 +20,10 @@ def func(x):
     return (x - 15) ** 2 + 5
 
 
+def fibonacci(n):
+    return m.pow((1 + m.sqrt(5))/2, n) - m.pow((1 - m.sqrt(5))/2, n) / m.sqrt(5)
+
+
 # Входные значения
 a = 2
 b = 200
@@ -52,7 +56,7 @@ while round(right - left, 3) > eps:
         left = x1
         right = x2
 
-print('Dichotomy method: ', round((left + right) / 2, 3))
+print('Dichotomy method:', round((left + right) / 2, 3))
 
 # todo Метод золотого сечения. Дополнить тему с погрешностью (Неточное задание величины sqrt(5))
 right = b
@@ -69,19 +73,32 @@ while round(right - left, 3) > eps:
         left = x1
         right = x2
 
-print('Golden ratio: ', round((left + right) / 2, 3))
+print('Golden ratio:', round((left + right) / 2, 3))
 
-# todo Метод Фибоначчи
+# todo Метод Фибоначчи. Отполировать, проверить
 right = b
 left = a
 # F(n+2) > (b-a)/eps
-n = m.ceil(m.log((m.sqrt(5) * (right - left)) / (eps * (3 + m.sqrt(5))), (1 + m.sqrt(5)) / 2))
-print('n: ', round(n, 3))
+num = int(m.ceil(m.log((m.sqrt(5) * (right - left)) / (eps * (3 + m.sqrt(5))), (1 + m.sqrt(5)) / 2)))
 
-x1 = left + 2 * (right - left) / (3 + m.sqrt(5))
-x2 = left + 2 * (right - left) / (1 + m.sqrt(5))
-print('x1: ', round(x1, 3))
-print('x2: ', round(x2, 3))
+# x1 = left + 2 * (right - left) / (3 + m.sqrt(5))
+# x2 = left + 2 * (right - left) / (1 + m.sqrt(5))
+
+xx1 = left + fibonacci(num) * (right - left) / fibonacci(num + 2)
+xx2 = left + fibonacci(num + 1) * (right - left) / fibonacci(num + 2)
+
+for k in range(1, num + 1):
+    xx1 = left + fibonacci(num - k + 1) * (right - left) / fibonacci(num - k + 3)
+    xx2 = left + fibonacci(num - k + 2) * (right - left) / fibonacci(num - k + 3)
+    if func(xx1) > func(xx2):
+        left = xx1
+    if func(xx1) < func(xx2):
+        right = xx2
+    if func(xx1) == func(xx2):
+        left = x1
+        right = x2
+
+print('Fibonacci method:', round((left + right) / 2, 3))
 
 # todo Поиск минимума функции на прямой
 # todo Поиск минимума функции n переменных в заданном направлении
