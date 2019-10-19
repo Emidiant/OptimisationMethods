@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import math as m
 
 dpi = 80
 fig = plt.figure(dpi=dpi, figsize=(512 / dpi, 384 / dpi))
@@ -14,18 +15,18 @@ plt.ylabel('f(x)')
 # Вариант?
 # Пример f(x) = (x-15)^2+5, x in [2, 200]
 
-# Метод дихотомии (деления отрезка пополам)
-
-a = 2
-b = 200
-eps = 0.001
-delta = eps / 2
-
 
 def func(x):
     return (x - 15) ** 2 + 5
 
 
+# Входные значения
+a = 2
+b = 200
+eps = 0.001
+delta = eps / 2
+
+# Визуализация
 val_y = []
 val_x = []
 x0 = a
@@ -36,6 +37,7 @@ while x0 < b:
 
 plt.plot(val_x, val_y, color='blue', linestyle='-', label='func')
 
+# Метод дихотомии (деления отрезка пополам)
 right = b
 left = a
 
@@ -52,7 +54,7 @@ while round(right - left, 3) > eps:
 
 print('Dichotomy method: ', round((left + right) / 2, 3))
 
-# todo Метод золотого сечения. Дополнить тему с погрешностью
+# todo Метод золотого сечения. Дополнить тему с погрешностью (Неточное задание величины sqrt(5))
 right = b
 left = a
 
@@ -66,12 +68,23 @@ while round(right - left, 3) > eps:
     if func(x1) == func(x2):
         left = x1
         right = x2
+
 print('Golden ratio: ', round((left + right) / 2, 3))
 
 # todo Метод Фибоначчи
+right = b
+left = a
+# F(n+2) > (b-a)/eps
+n = m.ceil(m.log((m.sqrt(5) * (right - left)) / (eps * (3 + m.sqrt(5))), (1 + m.sqrt(5)) / 2))
+print('n: ', round(n, 3))
+
+x1 = left + 2 * (right - left) / (3 + m.sqrt(5))
+x2 = left + 2 * (right - left) / (1 + m.sqrt(5))
+print('x1: ', round(x1, 3))
+print('x2: ', round(x2, 3))
+
 # todo Поиск минимума функции на прямой
 # todo Поиск минимума функции n переменных в заданном направлении
-
 
 plt.legend(loc='upper right')
 plt.grid(True)
