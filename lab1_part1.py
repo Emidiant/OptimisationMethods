@@ -94,13 +94,52 @@ for k in range(1, num + 1):
         left = xx1
     if func(xx1) < func(xx2):
         right = xx2
-    if func(xx1) == func(xx2):
-        left = x1
-        right = x2
 
 print('Fibonacci method:', round((left + right) / 2, 3))
 
-# todo Поиск минимума функции на прямой
+# todo Поиск минимума функции на прямой. тут первая реализация, ещё подумаю как оптимизировать код
+
+xk1 = 0
+
+if func(xk1) > func(xk1 + delta):
+    left = xk1
+    right = xk1 + delta
+    h = delta
+else:
+    if func(xk1) > func(xk1 - delta):
+        right = xk1
+        left = xk1 - delta
+        h = - delta
+    else:
+        print(xk1, 'is minimum')
+        h = 0
+
+if h != 0:
+    h *= 2
+    xk2 = xk1 + h
+
+    while func(xk1) > func(xk2):
+        h *= 2
+        xk1 = xk2
+        xk2 += h
+
+    if xk1 - h/2 > xk2 - h:
+        left = xk2 - h
+        right = xk1 - h/2
+    else:
+        right = xk2 - h
+        left = xk1 - h / 2
+    print('Finding the minimum function on the line', '[', round(left, 3), round(right, 3), ']')
+
+while func(x0) > func(x0+1):
+    if func(x0) > func(x0 + delta):
+        x0 += delta
+        h *= 2
+    else:
+        if func(x0) > func(x0 - delta):
+            x0 -= delta
+            h = - delta
+
 # todo Поиск минимума функции n переменных в заданном направлении
 
 plt.legend(loc='upper right')
