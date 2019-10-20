@@ -57,11 +57,13 @@ while round(right - left, decimal) > eps:
     counter += 1
     x1 = (left + right) / 2 - delta
     x2 = (left + right) / 2 + delta
-    if func(x1) > func(x2):
+    f1 = func(x1)
+    f2 = func(x2)
+    if f1 > f2:
         left = x1
-    if func(x1) < func(x2):
+    if f1 < f2:
         right = x2
-    if func(x1) == func(x2):
+    if f1 == f2:
         left = x1
         right = x2
 
@@ -75,6 +77,7 @@ iterDich = m.log((b - a) / eps, m.e) / m.log(2, m.e)
 print(' Iteration in Dichotomy method.', 'rule:', round(iterDich, 1), ', counter:', counter)
 
 # todo Метод золотого сечения. Дополнить тему с погрешностью (Неточное задание величины sqrt(5))
+# todo Вычислять функцию единожды
 right = b
 left = a
 counter = 0
@@ -84,11 +87,13 @@ while round(right - left, decimal) > eps:
     counter += 1
     x1 = left + 0.381966011 * (right - left)
     x2 = left + 0.618003399 * (right - left)
-    if func(x1) > func(x2):
+    f2 = func(x2)
+    f1 = func(x1)
+    if f1 > f2:
         left = x1
-    if func(x1) < func(x2):
+    if f1 < f2:
         right = x2
-    if func(x1) == func(x2):
+    if f1 == f2:
         left = x1
         right = x2
 
@@ -110,9 +115,11 @@ xx2 = left + fibonacci(num + 1) * (right - left) / fibonacci(num + 2)
 for k in range(0, num):
     xx1 = left + fibonacci(num - k + 1) * (right - left) / fibonacci(num - k + 3)
     xx2 = left + fibonacci(num - k + 2) * (right - left) / fibonacci(num - k + 3)
-    if func(xx1) > func(xx2):
+    f2 = func(xx2)
+    f1 = func(xx1)
+    if f1 > f2:
         left = xx1
-    if func(xx1) < func(xx2):
+    if f1 < f2:
         right = xx2
 
 print('Fibonacci method:', round((left + right) / 2, 3))
