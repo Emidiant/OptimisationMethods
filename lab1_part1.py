@@ -131,15 +131,6 @@ if h != 0:
         left = xk1 - h / 2
     print('Finding the minimum function on the line', '[', round(left, 3), round(right, 3), ']')
 
-while func(x0) > func(x0+1):
-    if func(x0) > func(x0 + delta):
-        x0 += delta
-        h *= 2
-    else:
-        if func(x0) > func(x0 - delta):
-            x0 -= delta
-            h = - delta
-
 # todo Поиск минимума функции n переменных в заданном направлении
 
 plt.legend(loc='upper right')
