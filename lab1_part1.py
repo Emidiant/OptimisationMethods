@@ -30,6 +30,13 @@ b = 200
 eps = 0.001
 delta = eps / 2
 
+# Определение количества знаков после запятой и точности eps
+decimal = 0
+epsilon = eps
+while epsilon < 1:
+    epsilon *= 10
+    decimal += 1
+
 # Визуализация
 val_y = []
 val_x = []
@@ -44,8 +51,10 @@ plt.plot(val_x, val_y, color='blue', linestyle='-', label='func')
 # Метод дихотомии (деления отрезка пополам)
 right = b
 left = a
+counter = 0
 
-while round(right - left, 3) > eps:
+while round(right - left, decimal) > eps:
+    counter += 1
     x1 = (left + right) / 2 - delta
     x2 = (left + right) / 2 + delta
     if func(x1) > func(x2):
@@ -58,11 +67,21 @@ while round(right - left, 3) > eps:
 
 print('Dichotomy method:', round((left + right) / 2, 3))
 
+# todo Количество итераций
+
+iterDich = m.log((b - a) / eps, m.e) / m.log(2, m.e)
+
+# todo counter и rule слишком разнятся
+print(' Iteration in Dichotomy method.', 'rule:', round(iterDich, 1), ', counter:', counter)
+
 # todo Метод золотого сечения. Дополнить тему с погрешностью (Неточное задание величины sqrt(5))
 right = b
 left = a
+counter = 0
+iterGold = m.log((b - a) / eps, m.e) / m.log(1.618, m.e)
 
-while round(right - left, 3) > eps:
+while round(right - left, decimal) > eps:
+    counter += 1
     x1 = left + 0.381966011 * (right - left)
     x2 = left + 0.618003399 * (right - left)
     if func(x1) > func(x2):
@@ -74,6 +93,7 @@ while round(right - left, 3) > eps:
         right = x2
 
 print('Golden ratio:', round((left + right) / 2, 3))
+print(' Iteration in Golden ratio.', 'rule:', round(iterGold, 1), ', counter:', counter)
 
 # todo Метод Фибоначчи. Отполировать, проверить
 right = b
@@ -87,7 +107,7 @@ num = int(m.ceil(m.log((m.sqrt(5) * (right - left)) / (eps * (3 + m.sqrt(5))), (
 xx1 = left + fibonacci(num) * (right - left) / fibonacci(num + 2)
 xx2 = left + fibonacci(num + 1) * (right - left) / fibonacci(num + 2)
 
-for k in range(1, num + 1):
+for k in range(0, num):
     xx1 = left + fibonacci(num - k + 1) * (right - left) / fibonacci(num - k + 3)
     xx2 = left + fibonacci(num - k + 2) * (right - left) / fibonacci(num - k + 3)
     if func(xx1) > func(xx2):
@@ -96,11 +116,12 @@ for k in range(1, num + 1):
         right = xx2
 
 print('Fibonacci method:', round((left + right) / 2, 3))
+print(' Iterations in Fibonacci method:', num)
 
-# todo Поиск минимума функции на прямой. тут первая реализация, ещё подумаю как оптимизировать код
+# todo Поиск минимума функции на прямой. тут первая реализация, ещё подумаю как оптимизировать код.
+# todo ломается при изменении точности с 0.001 на 0.01!!!
 
-xk1 = 0
-
+xk1 = 1  # может быть любым
 if func(xk1) > func(xk1 + delta):
     left = xk1
     right = xk1 + delta
@@ -129,7 +150,7 @@ if h != 0:
     else:
         right = xk2 - h
         left = xk1 - h / 2
-    print('Finding the minimum function on the line', '[', round(left, 3), round(right, 3), ']')
+    print('Finding the minimum function on the line', '[', round(left, 3), ';', round(right, 3), ']')
 
 # todo Поиск минимума функции n переменных в заданном направлении
 
