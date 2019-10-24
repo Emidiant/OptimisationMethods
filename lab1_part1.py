@@ -58,10 +58,12 @@ def dichotomy(a, b, eps):
         if f1 < f2:
             right = x2 - delta
     # Количество итераций
-    print('Dichotomy method:', (left + right) / 2)
     iter_dich = m.log((b - a) / eps, m.e) / m.log(2, m.e)
-    print(' Iteration in Dichotomy method.', 'rule:', iter_dich, ', counter:', counter, '\n')
-    return counter
+    res_dich = []
+    res_dich += [(left + right) / 2]
+    res_dich += [iter_dich]
+    res_dich += [counter]
+    return res_dich
 
 
 # todo Метод золотого сечения. Дополнить тему с погрешностью (Неточное задание величины sqrt(5))
@@ -91,9 +93,11 @@ def golden_ratio(a, b, eps):
             x1 = right - (right - left) / psi
             f2 = f1
             f1 = func(x1)
-    print('Golden ratio:', (left + right) / 2)
-    print(' Iteration in Golden ratio.', 'rule:', iter_gold, ', counter:', counter, '\n')
-    return counter
+    gold_res = []
+    gold_res += [(left + right) / 2]
+    gold_res += [iter_gold]
+    gold_res += [counter]
+    return gold_res
 
 
 def fibonacci(a, b, eps):
@@ -117,9 +121,10 @@ def fibonacci(a, b, eps):
             f2 = f1
             xx1 = left + fib(num - k + 1) * (right - left) / fib(num - k + 3)
             f1 = func(xx1)
-    print('Fibonacci method:', (left + right) / 2)
-    print(' Iterations in Fibonacci method:', num, '\n')
-    return num
+    result = []
+    result += [(left + right) / 2]
+    result += [num]
+    return result
 
 
 # todo Поиск минимума функции на прямой. тут первая реализация, ещё подумаю как оптимизировать код.
@@ -147,6 +152,7 @@ def find_min_on_line(eps):
             h *= 2
             xk1 = xk2
             xk2 += h
+
         if xk1 - h/2 > xk2 - h:
             left = xk2
             right = xk1 - h/2
@@ -165,9 +171,9 @@ def iterations_dependence(a, b):
     while i < 1:
         i += 0.001
         eps += [m.log(i, 10)]
-        iter_dich += [2 * dichotomy(a, b, i)]
-        iter_gold += [1 + golden_ratio(a, b, i)]
-        iter_fib += [1 + fibonacci(a, b, i)]
+        iter_dich += [2 * dichotomy(a, b, i)[2]]
+        iter_gold += [1 + golden_ratio(a, b, i)[2]]
+        iter_fib += [1 + fibonacci(a, b, i)[1]]
     dpi = 80
     fig = plt.figure(dpi=dpi, figsize=(512 / dpi, 384 / dpi))
     mpl.rcParams.update({'font.size': 10})
@@ -192,11 +198,16 @@ def main():
     b = 15
     eps = 0.001
     visualisation(a, b)
-    dichotomy(a, b, eps)
-    golden_ratio(a, b, eps)
-    fibonacci(a, b, eps)
+    res_dich = dichotomy(a, b, eps)
+    print('Dichotomy method:', res_dich[0])
+    print(' Iteration in Dichotomy method.', 'rule:', res_dich[1], ', counter:', res_dich[2], '\n')
+    gold_res = golden_ratio(a, b, eps)
+    print('Golden ratio:', gold_res[0])
+    print(' Iteration in Golden ratio.', 'rule:', gold_res[1], ', counter:', gold_res[2], '\n')
+    fib_res = fibonacci(a, b, eps)
+    print('Fibonacci method:', fib_res[0])
+    print(' Iterations in Fibonacci method:', fib_res[1], '\n')
     find_min_on_line(eps)
-
     iterations_dependence(a, b)
     print("--- %s seconds ---" % round(time.time() - start_time, 3))
 
