@@ -1,29 +1,19 @@
 import math as m
-from lab1_part1 import fibonacci, find_min_on_line
 from sympy import *
 
 
-# def func(x1, x2):
-#     return x1 ** 2 + x2 ** 2
-#
 def func(x1, x2):
     return (1.5 - x1 * (1 - x2)) ** 2 + (2.25 - x1 * (1 - x2 ** 2)) ** 2 + (2.625 - x1 * (1 - x2 ** 3)) ** 2
 
 
-# def derivative_x1(x1, x2):
-#     return 2 * x1
-#
-#
-# def derivative_x2(x1, x2):
-#     return 2 * x2
-
-
 def derivative_x1(x1, x2):
-    return (2*x2 - 2)*(-x1*(1 - x2) + 1.5) + (2*x2**2 - 2)*(-x1*(1 - x2**2) + 2.25) + (2*x2**3 - 2)*(-x1*(1 - x2**3) + 2.625)
+    return (2 * x2 - 2) * (-x1 * (1 - x2) + 1.5) + (2 * x2 ** 2 - 2) * (-x1 * (1 - x2 ** 2) + 2.25) + \
+           (2 * x2 ** 3 - 2) * ( -x1 * (1 - x2 ** 3) + 2.625)
 
 
 def derivative_x2(x1, x2):
-    return 6*x1*x2**2*(-x1*(1 - x2**3) + 2.625) + 4*x1*x2*(-x1*(1 - x2**2) + 2.25) + 2*x1*(-x1*(1 - x2) + 1.5)
+    return 6 * x1 * x2 ** 2 * (-x1 * (1 - x2 ** 3) + 2.625) + 4 * x1 * x2 * (-x1 * (1 - x2 ** 2) + 2.25) + \
+           2 * x1 * (-x1 * (1 - x2) + 1.5)
 
 
 def g(x1, x2, alpha):
@@ -107,52 +97,46 @@ def main():
     print(func(x1, x2).diff(x1))
     print(func(x1, x2).diff(x2))
 
-    x1, x2 = 2, -3
+    x1, x2 = 5, 5
+
     eps = 0.0001
-    # print('значения частных производных', derivative_x1(x1, x2), derivative_x2(x1, x2))
-    # alpha = var('alpha')
-    # print(g(x1, x2, alpha))
-    # borders = find_min_on_line(x1, x2, eps)
-    # res_gold = golden_ratio(x1, x2, borders[0], borders[1], eps)
-    # print(res_gold)
-    # print('g(alpha)', g(x1, x2, res_gold[0]))
-    # ans_alpha = res_gold[0]
-    # print('alpha', ans_alpha)
-    # print('')
-    # x3 = x1 - ans_alpha * derivative_x1(x1, x2)
-    # x4 = x2 - ans_alpha * derivative_x2(x1, x2)
-    #
-    # print(x3, x4)
 
     der1 = derivative_x1(x1, x2)
     der2 = derivative_x2(x1, x2)
-    x0 = 0
-    y0 = 0
-    counter = 0
 
-    while m.fabs(func(x0, y0) - func(x1, x2)) > eps:
+    counter = 0
+    f1 = func(x1, x2)
+    f0 = f1 - eps * 2
+
+    while m.fabs(f0 - f1) > eps:
         counter += 1
-        print('значения частных производных', der1, der2)
-        alpha = var('alpha')
-        print('g(x) =', g(x1, x2, alpha))
+        print('Частные производные:', der1, der2)
         borders = find_min_on_line(x1, x2, eps)
         res_gold = golden_ratio(x1, x2, borders[0], borders[1], eps)
-        print('res_gold', res_gold)
-        print('g(alpha)', g(x1, x2, res_gold[0]))
+        print('g(alpha) =', g(x1, x2, res_gold[0]))
         ans_alpha = res_gold[0]
-        print('alpha', ans_alpha)
-        x0 = x1
-        y0 = x2
+        print('alpha =', ans_alpha)
+        print('f(x1, x2) =', func(x1, x2))
+        print('x1 =', x1, 'x2 =', x2)
+        f0 = f1
         x1 -= ans_alpha * der1
         x2 -= ans_alpha * der2
+        f1 = func(x1, x2)
         der1 = derivative_x1(x1, x2)
         der2 = derivative_x2(x1, x2)
-        print(x1, x2)
-        print('answer', func(x1, x2))
         print('')
 
-    print(counter)
+    print('Number of iterations = ', counter)
 
 
 if __name__ == "__main__":
     main()
+
+
+# таблицы с результатами проведенных исследований, где должны быть отражены:
+    # начальное приближение x0,
+    # задаваемая точность,
+    # количество итераций,
+    # число вычислений целевой функции,
+    # найденная точка,
+    # значение функции в ней,
