@@ -106,27 +106,42 @@ def main():
 
     x1der = func(x1, x2).diff(x1)
     x2der = func(x1, x2).diff(x2)
-    print(x1der)
-    print(x2der)
+    # print(x1der)
+    # print(x2der)
 
     x1der = lambda x, y: partial_derivative(func, 0, [x, y])
     x2der = lambda x, y: partial_derivative(func, 1, [x, y])
-    origx1, origx2 = 100, 100
+    origx1, origx2 = 0, 0
     x1, x2 = origx1, origx2
-
-    eps = 0.00001
+    eps = 1e-5
 
     der1 = derivative_x1(x1, x2)
     der2 = derivative_x2(x1, x2)
+    len = m.sqrt(der1 ** 2 + der2 ** 2)
+    der1 /= len
+    der2 /= len
 
     counter = 0
     f1 = func(x1, x2)
     f0 = f1 - eps * 2
 
-    while m.fabs(f0 - f1) > eps:
+    well_counter = 0
+
+    while m.fabs(f0 - f1) > eps or counter == 0:
+        if well_counter > 10:
+            well_counter = 0
+            x1 = 0
+            x2 = 0
+            der1 = derivative_x1(x1, x2)
+            der2 = derivative_x2(x1, x2)
+            len = m.sqrt(der1 ** 2 + der2 ** 2)
+            der1 /= len
+            der2 /= len
+        x1_prev = x1
+        x2_prev = x2
         counter += 1
         print('Частные производные:', der1, der2)
-        print('Частные производные:', x1der(x1, x2), x2der(x1, x2))
+        # print('Частные производные:', x1der(x1, x2), x2der(x1, x2))
         borders = find_min_on_line(x1, x2, eps)
         res_gold = golden_ratio(x1, x2, borders[0], borders[1], eps)
         print('g(alpha) =', g(x1, x2, res_gold[0]))
@@ -135,39 +150,49 @@ def main():
         print('f(x1, x2) =', func(x1, x2))
         print('x1 =', x1, 'x2 =', x2)
         f0 = f1
-        x1 -= ans_alpha * der1
-        x2 -= ans_alpha * der2
+        x1 -= ans_alpha * der1  # / m.sqrt(der1 ** 2 + der2 ** 2)
+        x2 -= ans_alpha * der2  # / m.sqrt(der1 ** 2 + der2 ** 2)
+        x1_curr = x1
+        x2_curr = x2
         f1 = func(x1, x2)
         der1 = derivative_x1(x1, x2)
         der2 = derivative_x2(x1, x2)
+        len = m.sqrt(der1 ** 2 + der2 ** 2)
+        der1 /= len
+        der2 /= len
+        if m.fabs(x1_prev - x1_curr) < eps and m.fabs(x2_prev - x2_curr) < eps:
+            well_counter += 1
+        else:
+            well_counter = 0
+
         print('')
 
     print('Number of iterations = ', counter)
 
-    x1, x2 = origx1, origx2
-
-    der1 = x1der(x1, x2)
-    der2 = x2der(x1, x2)
-
-    counter = 0
-    f1 = func(x1, x2)
-    f0 = f1 - eps * 2
-
-    while m.fabs(f0 - f1) > eps:
-        counter += 1
-        borders = find_min_on_line(x1, x2, eps)
-        res_gold = golden_ratio(x1, x2, borders[0], borders[1], eps)
-        ans_alpha = res_gold[0]
-        f0 = f1
-        x1 -= ans_alpha * der1
-        x2 -= ans_alpha * der2
-        f1 = func(x1, x2)
-        der1 = x1der(x1, x2)
-        der2 = x2der(x1, x2)
-    print('')
-    print("Numerical calculation of derivative:")
-    print('x1 =', x1, 'x2 =', x2)
-    print('Number of iterations = ', counter)
+    # x1, x2 = origx1, origx2
+    #
+    # der1 = x1der(x1, x2)
+    # der2 = x2der(x1, x2)
+    #
+    # counter = 0
+    # f1 = func(x1, x2)
+    # f0 = f1 - eps * 2
+    #
+    # while m.fabs(f0 - f1) > eps:
+    #     counter += 1
+    #     borders = find_min_on_line(x1, x2, eps)
+    #     res_gold = golden_ratio(x1, x2, borders[0], borders[1], eps)
+    #     ans_alpha = res_gold[0]
+    #     f0 = f1
+    #     x1 -= ans_alpha * der1
+    #     x2 -= ans_alpha * der2
+    #     f1 = func(x1, x2)
+    #     der1 = x1der(x1, x2)
+    #     der2 = x2der(x1, x2)
+    # print('')
+    # print("Numerical calculation of derivative:")
+    # print('x1 =', x1, 'x2 =', x2)
+    # print('Number of iterations = ', counter)
 
 
 if __name__ == "__main__":
