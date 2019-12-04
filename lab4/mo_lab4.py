@@ -34,7 +34,7 @@ def function_construction():
         dataset.append([x_vis[i], y_noise[i]])
 
     mpl.rcParams.update({'font.size': 10})
-    plt.title('Visualisation f(x)')
+    plt.title('Linear Regression')
     plt.ylabel('f(x)')
     plt.xlabel('x')
     plt.plot(x_vis, y_vis, color='blue', linestyle='-', label='arctg(x)+1')
@@ -172,7 +172,7 @@ def main():
     print('Iterations GD:', len(result))
     for i in range(len(result[0])):
         alpha.append([result[len(result) - 1][i][0]])
-    print('y =', alpha[0][0], '* x_0 +', alpha[1][0])
+    print('Linear function: y =', alpha[0][0], '* x_0 +', alpha[1][0])
     create_line(alpha)
     print('MSE:', q(f, alpha, y))
 
