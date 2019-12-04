@@ -157,7 +157,6 @@ def search_min(f, alpha, y):
         alpha_res.append(vector_subtraction(alpha_res[it - 1], constant_vector(grad_q(f, alpha_res[it - 1], y), h)))
         it += 1
         h /= it
-    print('Iterations GD:', it)
     return alpha_res
 
 
@@ -170,6 +169,7 @@ def main():
     alpha = alpha_matrix_create(data)
     result = search_min(f, alpha, y)
     alpha = []
+    print('Iterations GD:', len(result))
     for i in range(len(result[0])):
         alpha.append([result[len(result) - 1][i][0]])
     print('y =', alpha[0][0], '* x_0 +', alpha[1][0])
