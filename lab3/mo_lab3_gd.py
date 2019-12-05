@@ -1,4 +1,3 @@
-from copy import deepcopy
 from sympy import *
 from math import sqrt
 
@@ -8,15 +7,6 @@ def func(u):
     y = u[1][0]
     z = u[2][0]
     return 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
-
-
-def pivotize(mat_a, x):
-    mat_a = deepcopy(mat_a)
-    size = len(mat_a)
-    row = max(range(x, size), key=lambda i: abs(mat_a[i][x]))
-    if x != row:
-        mat_a[x], mat_a[row] = mat_a[row], mat_a[x]
-    return mat_a
 
 
 # перемножение матриц
