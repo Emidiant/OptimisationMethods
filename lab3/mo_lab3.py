@@ -119,7 +119,7 @@ def abs_grad(u):
 
 
 def main():
-    epsilon = [1e-1, 1e-3, 1e-5]
+    epsilon = [1e-1, 1e-4, 1e-5]
     for i in range(len(epsilon)):
         u0 = [[3], [1], [-2]]
         it = 0
@@ -128,6 +128,7 @@ def main():
             it += 1
         print('Epsilon =', epsilon[i], 'Iterations:', it)
         print('x =', u0[0], 'y =', u0[1], 'z =', u0[2])
+        print('Gradient modulus =', abs_grad(u0))
         print('min F(u) =', func(u0))
         print()
 
