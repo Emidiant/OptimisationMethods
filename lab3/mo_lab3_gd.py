@@ -9,27 +9,6 @@ def func(u):
     return 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
 
 
-# перемножение матриц
-def matrix_multiplication(a, b):
-    n1 = len(a)
-    m1 = len(a[0])
-    n2 = len(b)
-    m2 = len(b[0])
-    res = []
-    t = []
-    value = 0
-    if m1 == n2:
-        for i in range(n1):
-            for j in range(m2):
-                for l in range(m1):
-                    value += a[i][l] * b[l][j]
-                t.append(value)
-                value = 0
-            res.append(t)
-            t = []
-    return res
-
-
 def grad_f(u):
     xk = u[0][0]
     yk = u[1][0]
