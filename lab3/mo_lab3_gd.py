@@ -63,17 +63,18 @@ def norm_vector(vec_a, vec_b):
 
 
 # Выбор оптимального шага (не наискорейший)!!!!
-def optimal_step(u0):
+def optimal_step(uk, u0, c):
     x, y, z = symbols('x y z')
     f = 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
     fx = f.diff(x)
     fy = f.diff(y)
     fz = f.diff(z)
-
-    fxx = fx.diff(x).subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
-    fyy = fy.diff(y).subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
-    fzz = fz.diff(z).subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
-    return float(3 / (fxx + fyy + fzz))
+    if (abs_grad(uk) < abs_grad(u0)):
+        c /= 2
+    fxx = fx.subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
+    fyy = fy.subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
+    fzz = fz.subs({x: u0[0][0], y: u0[1][0], z: u0[2][0]})
+    return float(c / sqrt(fxx**2 + fyy**2 + fzz**2)), c
 
 
 def gradient_descent(eps):
@@ -82,9 +83,10 @@ def gradient_descent(eps):
     u0 = [[3], [1], [-2]]
     alpha_res.append(vector_subtraction(u0, u0))
     alpha_res.append(u0)
-
+    c = 10
     while norm_vector(alpha_res[it], alpha_res[it - 1]) > eps:
-        h = optimal_step(u0)
+    
+        h,c = optimal_step(alpha_res[it - 1],u0,c)
         # todo наискорейший спуск как тут делать?!
         print('h =', h)
         print('u0 =', u0)
@@ -94,6 +96,7 @@ def gradient_descent(eps):
         it += 1
     print('Epsilon =', eps, 'Iterations:', it - 1)
     print('Gradient modulus =', abs_grad(u0))
+
     return u0
 
 
