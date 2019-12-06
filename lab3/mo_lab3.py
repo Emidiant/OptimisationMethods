@@ -1,4 +1,5 @@
 from sympy import *
+from scipy.misc import derivative
 from copy import deepcopy
 from math import sqrt
 
@@ -10,24 +11,70 @@ def func(u):
     return 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
 
 
-def hesse_matrix(u):
+def funcd(u, d):
+    h = 1e-4
+    x, y, z = u[0][0], u[1][0], u[2][0]
+    xd, yd, zd = d[0], d[1], d[2]
+    if xd + yd + zd != 1:
+        print('Wrong d, must be 1 for variable to derivative and other 0')
+        return None
+    result = func([[x + xd * h], [y + yd * h], [z + zd * h]]) - \
+        func([[x - xd * h], [y - yd * h], [z - zd * h]])
+    result /= 2 * h
+    return result
+
+
+def funcdd(u, d):
+    h = 1e-4
+    x, y, z = u[0][0], u[1][0], u[2][0]
+    xd, yd, zd = d[0], d[1], d[2]
+    if xd + yd + zd != 2:
+        print('Wrong d, must be two 1 or one 2 (one for each variable to derivative)')
+        return None
+    result = func([[x + xd * h], [y + yd * h], [z + zd * h]]) + \
+        func([[x - xd * h], [y - yd * h], [z - zd * h]])
+    for index, i in enumerate(d):
+        if i == 1:
+            d[index] = -1
+            break
+    else:
+        d = [0, 0, 0]
+    xd, yd, zd = d[0], d[1], d[2]
+    result -= func([[x + xd * h], [y + yd * h], [z + zd * h]]) + \
+        func([[x - xd * h], [y - yd * h], [z - zd * h]])
+    result /= 4 * h ** 2
+    return result
+
+
+def hesse_matrix(u, analytical=true):
     xk = u[0][0]
     yk = u[1][0]
     zk = u[2][0]
     x, y, z = symbols('x y z')
     f = 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
-    fx = f.diff(x)
-    fy = f.diff(y)
-    fz = f.diff(z)
-    fxx = fx.diff(x).subs({x: xk, y: yk, z: zk})
-    fxy = fx.diff(y).subs({x: xk, y: yk, z: zk})
-    fxz = fx.diff(z).subs({x: xk, y: yk, z: zk})
-    fyy = fy.diff(y).subs({x: xk, y: yk, z: zk})
-    fyz = fy.diff(z).subs({x: xk, y: yk, z: zk})
-    fzz = fz.diff(z).subs({x: xk, y: yk, z: zk})
-    return [[fxx, fxy, fxz],
-            [fxy, fyy, fyz],
-            [fxz, fyz, fzz]]
+    if analytical:
+        fx = f.diff(x)
+        fy = f.diff(y)
+        fz = f.diff(z)
+        fxx = fx.diff(x).subs({x: xk, y: yk, z: zk})
+        fxy = fx.diff(y).subs({x: xk, y: yk, z: zk})
+        fxz = fx.diff(z).subs({x: xk, y: yk, z: zk})
+        fyy = fy.diff(y).subs({x: xk, y: yk, z: zk})
+        fyz = fy.diff(z).subs({x: xk, y: yk, z: zk})
+        fzz = fz.diff(z).subs({x: xk, y: yk, z: zk})
+        return [[fxx, fxy, fxz],
+                [fxy, fyy, fyz],
+                [fxz, fyz, fzz]]
+    else:
+        fxx = funcdd(u, [2, 0, 0])
+        fxy = funcdd(u, [1, 1, 0])
+        fxz = funcdd(u, [1, 0, 1])
+        fyy = funcdd(u, [0, 2, 0])
+        fyz = funcdd(u, [0, 1, 1])
+        fzz = funcdd(u, [0, 0, 2])
+        return [[fxx, fxy, fxz],
+                [fxy, fyy, fyz],
+                [fxz, fyz, fzz]]
 
 
 def pivotize(mat_a, x):
@@ -91,15 +138,20 @@ def matrix_multiplication(a, b):
     return res
 
 
-def grad_f(u):
+def grad_f(u, analytical=True):
     xk = u[0][0]
     yk = u[1][0]
     zk = u[2][0]
-    x, y, z = symbols('x y z')
-    f = 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
-    fx = f.diff(x).subs({x: xk, y: yk, z: zk})
-    fy = f.diff(y).subs({x: xk, y: yk, z: zk})
-    fz = f.diff(z).subs({x: xk, y: yk, z: zk})
+    if analytical:
+        x, y, z = symbols('x y z')
+        f = 100 * (z - ((x + y) / 2) ** 2) ** 2 + (1 - x) ** 2 + (1 - y) ** 2
+        fx = f.diff(x).subs({x: xk, y: yk, z: zk})
+        fy = f.diff(y).subs({x: xk, y: yk, z: zk})
+        fz = f.diff(z).subs({x: xk, y: yk, z: zk})
+    else:
+        fx = funcd(u, [1, 0, 0])
+        fy = funcd(u, [0, 1, 0])
+        fz = funcd(u, [0, 0, 1])
     return [[float(fx)], [float(fy)], [float(fz)]]
 
 
@@ -110,9 +162,9 @@ def vector_subtraction(a, b):
     return c
 
 
-def abs_grad(u):
+def abs_grad(u,analytical=True):
     res = 0
-    grad = grad_f(u)
+    grad = grad_f(u,analytical)
     for i in range(len(u)):
         res += grad[i][0] ** 2
     return sqrt(res)
@@ -120,15 +172,31 @@ def abs_grad(u):
 
 def main():
     epsilon = [1e-1, 1e-4, 1e-5]
+    print('Analytical method')
     for i in range(len(epsilon)):
         u0 = [[3], [1], [-2]]
         it = 0
         while abs_grad(u0) > epsilon[i]:
-            u0 = vector_subtraction(u0, matrix_multiplication(invert(hesse_matrix(u0)), grad_f(u0)))
+            u0 = vector_subtraction(u0, matrix_multiplication(
+                invert(hesse_matrix(u0)), grad_f(u0)))
             it += 1
         print('Epsilon =', epsilon[i], 'Iterations:', it)
         print('x =', u0[0], 'y =', u0[1], 'z =', u0[2])
         print('Gradient modulus =', abs_grad(u0))
+        print('min F(u) =', func(u0))
+        print()
+    print('========+=============+========')
+    print('Numerical method')
+    for i in range(len(epsilon)):
+        u0 = [[3], [1], [-2]]
+        it = 0
+        while abs_grad(u0,False) > epsilon[i]:
+            u0 = vector_subtraction(u0, matrix_multiplication(
+                invert(hesse_matrix(u0,False)), grad_f(u0,False)))
+            it += 1
+        print('Epsilon =', epsilon[i], 'Iterations:', it)
+        print('x =', u0[0], 'y =', u0[1], 'z =', u0[2])
+        print('Gradient modulus =', abs_grad(u0,False))
         print('min F(u) =', func(u0))
         print()
 
